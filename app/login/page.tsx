@@ -1,1 +1,28 @@
-'use client';import {useState} from 'react';import {createBrowserClient} from '@supabase/ssr';export default function Login(){const[email,setEmail]=useState('');const[password,setPassword]=useState('');const[message,setMessage]=useState('');async function submit(e:React.FormEvent){e.preventDefault();const url=process.env.NEXT_PUBLIC_SUPABASE_URL,key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;if(!url||!key){setMessage('Supabase is not configured');return}const {error}=await createBrowserClient(url,key).auth.signInWithPassword({email,password});if(error)setMessage(error.message);else window.location.assign('/dashboard')}return <section className="section wrap" style={{maxWidth:550}}><p className="eyebrow">Authorized staff</p><h1>Staff Sign In</h1><form className="card" onSubmit={submit}><label className="field">Email<input type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label className="field">Password<input type="password" required value={password} onChange={e=>setPassword(e.target.value)}/></label><button className="btn button">Sign In</button><p role="alert" className="muted">{message}</p></form></section>}
+import type { Metadata } from 'next';
+import { LoginForm } from './login-form';
+
+export const metadata: Metadata = {
+  title: 'Staff Sign In | Hartung Xoatings',
+  robots: { index: false, follow: false },
+};
+
+export default async function Login({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const { error } = await searchParams;
+  const message = error === 'callback'
+    ? 'This sign-in link is invalid or expired. Sign in below or request a new invitation from your administrator.'
+    : error === 'signout'
+      ? 'We could not finish signing out. Please try again.'
+      : '';
+
+  return (
+    <section className="section wrap" style={{ maxWidth: 550 }}>
+      <p className="eyebrow">Authorized staff</p>
+      <h1>Staff Sign In</h1>
+      <LoginForm initialMessage={message} />
+    </section>
+  );
+}

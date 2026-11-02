@@ -1,0 +1,20 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Secrets and deployment-local configuration
+.env*
+!.env.example
+.vercel/
+*.pem
+*.key
+
+# Runtime data and local exports must never enter the public repository.
+private-data/
+exports/
+backups/
+*.log
+.DS_Store
